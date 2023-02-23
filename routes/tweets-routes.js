@@ -1,50 +1,12 @@
 import express from "express";
-import { usuarios, tweets } from "../data.js";
+import { newTweet, userTweets, allTweets } from "../controllers/tweets-controllers.js";
 
 const router = express.Router();
 
-router.post('/tweets', (req, res) => {
-  const { tweet, username } = req.body;
+router.post('/tweets', newTweet);
 
-  if (!username || !tweet) {
-    return res.status(400).send('Todos os campos são obrigatórios!');
-  }
+router.get('/tweets/:username', userTweets);
 
-  const { avatar } = usuarios.find(user => user.username === username);
-
-  tweets.push({ username, tweet, avatar });
-
-  res.status(201).send('OK, seu tweet foi criado');
-});
-
-router.get('/tweets/:username', (req, res) => {
-  const { username } = req.params;
-
-  const tweetsDoUsuario = tweets.filter(t => t.username === username);
-
-  res.status(200).send(tweetsDoUsuario);
-});
-
-router.get('/tweets', (req, res) => {
-  const { page } = req.query;
-
-  if (page && page < 1) {
-    res.status(400).send('Informe uma página válida!');
-    return;
-  }
-  const limite = 10;
-  const start = (page - 1) * limite;
-  const end = page * limite;
-
-  if (tweets.length <= 10) {
-    return res.send(reverseTweets());
-  }
-
-  res.status(200).send([...tweets].reverse().slice(start, end));
-});
-
-function reverseTweets() {
-  return [...tweets].reverse();
-}
+router.get('/tweets', allTweets);
 
 export default router;
