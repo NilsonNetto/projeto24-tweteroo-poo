@@ -1,6 +1,7 @@
 import { usuarios, tweets } from "../data.js";
+import { Tweet } from "../models/tweet-model.js";
 
-export function newTweet(req, res) {
+export function insertTweet(req, res) {
   const { tweet, username } = req.body;
 
   if (!username || !tweet) {
@@ -9,12 +10,14 @@ export function newTweet(req, res) {
 
   const { avatar } = usuarios.find(user => user.username === username);
 
-  tweets.push({ username, tweet, avatar });
+  const newTweet = new Tweet(username, avatar, tweet);
+
+  tweets.push(newTweet);
 
   res.status(201).send('OK, seu tweet foi criado');
 }
 
-export function userTweets(req, res) {
+export function getUserTweets(req, res) {
   const { username } = req.params;
 
   const tweetsDoUsuario = tweets.filter(t => t.username === username);
@@ -22,7 +25,7 @@ export function userTweets(req, res) {
   res.status(200).send(tweetsDoUsuario);
 }
 
-export function allTweets(req, res) {
+export function getAllTweets(req, res) {
   const { page } = req.query;
 
   if (page && page < 1) {

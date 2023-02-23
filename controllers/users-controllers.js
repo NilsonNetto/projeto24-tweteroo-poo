@@ -1,6 +1,7 @@
 import { usuarios } from "../data.js";
+import { User } from "../models/user-model.js";
 
-export function login(req, res) {
+export function insertUser(req, res) {
   const { username, avatar } = req.body;
 
   if (!username || !avatar) {
@@ -8,7 +9,9 @@ export function login(req, res) {
     return;
   }
 
-  usuarios.push({ username, avatar });
+  const newUser = new User(username, avatar);
+
+  usuarios.push(newUser);
 
   res.status(200).send('OK deu tudo certo');
 }
